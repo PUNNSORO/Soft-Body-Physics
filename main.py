@@ -323,7 +323,7 @@ class rectangle:
 
         window.mainloop()
 
-care=rectangle(1/10,1000,3,[1,1],100,[0.2,0.2],[[2,2,-0.1,-0.1]],[0,0])#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
+care=rectangle(1/3,1000,3,[1,1],100,[0.2,0.2],[[2,2,-0.1,-0.1]],[0,0])#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
 care.simuler(10,1/50,300)#temps_de_la_simulation,precision_dt,scale
 
 

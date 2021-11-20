@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import time
 from tkinter import *
 
@@ -76,7 +75,7 @@ class rectangle:
         for o in self.start:
             i=o[0]
             j=o[1]
-            M[i][j]=[x+o[2]*l,y+o[3]*l]
+            M[i][j]=[x+(i+o[2])*l,y+(j+o[3])*l]
             print(M[i][j])
 
         W = 800
@@ -138,7 +137,7 @@ class rectangle:
             AB=np.sqrt((Bx - Ax) ** 2 + (By - Ay) ** 2)
             return [ k * (l - AB) * (Ax - Bx) / AB,  k * (l - AB) * (Ay - By) / AB]
 
-        for l in range(0,int(t*50/dt)):
+        for q in range(0,int(t*50/dt)):
             for i in range(1,len(M)):
                 for j in range(0,len(M[0])):
                     if i==0:
@@ -216,6 +215,7 @@ class rectangle:
                             Fr = [F5[0] + F6[0] + F7[0], F5[1] + F6[1] + F7[1]]
 
                     F[i][j]=Fr
+
             for i in range(1,len(M)):
                 for j in range(0,len(M[0])):
                     ACC[i][j][0] = (F[i][j][0] - alpha * V[i][j][0]) * dt / m
@@ -323,17 +323,8 @@ class rectangle:
 
         window.mainloop()
 
-care=rectangle(0.4,100,10,[1,1],10,[0.2,0.2],[[0,0,0,0]],[0,0])#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
-care.simuler(10,1/500,300)#temps_de_la_simulation,precision_dt,scale
-
-
-
-
-
-
-
-
-
+care=rectangle(1/10,1000,3,[1,1],100,[0.2,0.2],[[2,2,-0.1,-0.1]],[0,0])#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
+care.simuler(10,1/50,300)#temps_de_la_simulation,precision_dt,scale
 
 
 

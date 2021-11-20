@@ -10,13 +10,13 @@ class simple_square:
         self.start=start
 
     def simulate(self,t,alpha,scale,accuracy):
-        def SPRING_FORCE(B,A,l,k):
+        def SPRING_FORCE(B, A, l, k):  # force appliquée par le ressort se situant entre B et A sur A
             Ax = A[0]
             Ay = A[1]
             Bx = B[0]
             By = B[1]
-            AB=np.sqrt((Bx - Ax) ** 2 + (By - Ay) ** 2)
-            return [ k*(l - AB)*(Ax - Bx)/AB,  k * ((l/AB) - 1)*(Ay - By)]
+            AB = np.sqrt((Bx - Ax) ** 2 + (By - Ay) ** 2)
+            return [k * (l - AB) * (Ax - Bx) / AB, k * (l - AB) * (Ay - By) / AB]
         l=self.len
         d=l*np.sqrt(2)
         k=self.k
@@ -90,11 +90,11 @@ class simple_square:
             #Bvy1 += (FAB[1] + FCB[1] + FDB[1] - m * g - alpha * Bvy1) * dt / m
             #By1 += Bvy1 * dt
 
-            Aax0 = (FBA[0] + FCA[0] + FDA[0] - alpha * Avx1)
-            Aay0 = (FBA[1] + FCA[1] + FDA[1] - m * g - alpha * Avy1)
+            Aax0 = (FBA[0] + FCA[0] + FDA[0] - alpha * Avx1) / m
+            Aay0 = (FBA[1] + FCA[1] + FDA[1] - m * g - alpha * Avy1) / m
 
-            Bax0 = (FAB[0] + FCB[0] + FDB[0] - alpha * Bvx1)
-            Bay0 = (FAB[1] + FCB[1] + FDB[1] - m * g - alpha * Bvy1)
+            Bax0 = (FAB[0] + FCB[0] + FDB[0] - alpha * Bvx1) / m
+            Bay0 = (FAB[1] + FCB[1] + FDB[1] - m * g - alpha * Bvy1) / m
 
             Ax1 += Avx1 * dt + dt ** 2 / 2 * Aax0
             Ay1 += Avy1 * dt + dt ** 2 / 2 * Aay0
@@ -115,28 +115,17 @@ class simple_square:
             FDB = SPRING_FORCE(D, B, l, k)
             FCB = SPRING_FORCE(C, B, d, k)
 
-            Aax1 = (FBA[0] + FCA[0] + FDA[0] - alpha * Avx1)
-            Aay1 = (FBA[1] + FCA[1] + FDA[1] - m * g - alpha * Avy1)
+            Aax1 = (FBA[0] + FCA[0] + FDA[0] - alpha * Avx1) / m
+            Aay1 = (FBA[1] + FCA[1] + FDA[1] - m * g - alpha * Avy1) / m
 
-            Bax1 = (FAB[0] + FCB[0] + FDB[0] - alpha * Bvx1)
-            Bay1 = (FAB[1] + FCB[1] + FDB[1] - m * g - alpha * Bvy1)
+            Bax1 = (FAB[0] + FCB[0] + FDB[0] - alpha * Bvx1) / m
+            Bay1 = (FAB[1] + FCB[1] + FDB[1] - m * g - alpha * Bvy1) / m
 
             Avx1 += dt / 2 * (Aax1 + Aax0)
             Avy1 += dt / 2 * (Aay1 + Aay0)
             Bvx1 += dt / 2 * (Bax1 + Bax0)
             Bvy1 += dt / 2 * (Bay1 + Bay0)
 
-
-
-
-                #Ax2 = (dt ** 2 / (m - alpha*dt))*(FBA[0] + FCA[0] + FDA[0] + alpha * Ax1 / dt - A[0]/(dt**2))
-                #Ay2 = (dt ** 2 / (m - alpha*dt))*(FBA[1] + FCA[1] + FDA[1] + alpha * Ay1 / dt - A[1]/(dt**2) - m * g)
-                #Bx2 = (dt ** 2 / (m - alpha*dt))*(FAB[0] + FCB[0] + FDB[0] + alpha * Bx1 / dt - B[0]/(dt**2))
-                #By2 = (dt ** 2 / (m - alpha*dt))*(FAB[1] + FCB[1] + FDB[1] + alpha * By1 / dt - B[1]/(dt**2) - m * g)
-                #Cx1 = (dt ** 2 / (m - alpha))(FAC[0] + FBC[0] + FDC[0] + alpha * Cx / dt)
-                #Cy1 = (dt ** 2 / (m - alpha))(FAC[1] + FBC[1] + FDC[1] + alpha * Cy / dt-mg)
-                #Dx1 = (dt ** 2 / (m - alpha))(FAD[0] + FBD[0] + FCD[0] + alpha * Dx / dt)
-                #Dy1 = (dt ** 2 / (m - alpha))(FAD[1] + FBD[1] + FCD[1] + alpha * Dy / dt-mg)
 
             canvas.delete(lineAB)
             canvas.delete(lineAC)
@@ -157,11 +146,9 @@ class simple_square:
             time.sleep(0.02*dt)
             print(canvas.coords(pointA))
             print(FBA[0],FBA[1],FAB[0],FAB[1])
-            A=[Ax1,Ay1]
-            B=[Bx1,By1]
 
 
         window.mainloop()
 
-cube=simple_square(1,5,[0.1,0.1],0.2,[[1,1],[2,1],[1,0],[2,0]])
+cube=simple_square(1,10,[0.1,0.1],0.2,[[1,1],[2,1],[1,0],[2,0]])
 cube.simulate(10,10,100,1/50)

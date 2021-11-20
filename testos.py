@@ -3,25 +3,6 @@ import matplotlib.pyplot as plt
 import time
 from tkinter import *
 
-# maintenant on commencera le codage de la simulation en 2D d'un objet rectangle à plusieurs particules qui sera defini
-# simplement par les données de ses points qui se trouvent á ses extrimités, on commencera l'algorithme par implementer
-# juste les forces de ressort et puis apres on definira les forces internes tq les forces inter particules qui aiderons
-# á empecher l'objet de s'effondre sur lui meme, puis un peut plus tard on ajoutera les collisions qui rendrons la
-# simulation plus reele, mais ce qui sera plus impressionnant est l'ajout des phase d'elasticité et de plasticité pour
-# les materiaux, chose que je n'est pas encore y pensé une solution mais on vera!!!
-
-
-def matrice(y, x):
-    F = []
-    for k in range(0, y):
-        L = []
-        for l in range(0, x):
-            s = '.'
-            L.append(s)
-        F.append(L)
-    return F
-
-
 class rectangle:
     def __init__(self, longueur_precision_spaciale, raideur, mass, dimensions, alpha, position_initial, positions_de_qlq_points, vitesse_de_G):
         self.len = longueur_precision_spaciale

@@ -20,15 +20,17 @@ def matrice(y,x):
      return F
 
 class rectangle:
-    def __init__(self,longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G):
+    def __init__(self,longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotation):
         self.len = longueur_precision_spaciale
         self.stif = raideur
+        self.dissip = dissipation_lors_des_collision
         self.dim = dimensions
         self.mass = mass
         self.position = position_initial
         self.start = positions_de_qlq_points
         self.alpha = alpha
         self.vit = vitesse_de_G
+        self.rot = rotation
 
     def simuler(self,temps_de_la_simulation,precision_dt,scale):
         t = temps_de_la_simulation
@@ -39,11 +41,13 @@ class rectangle:
         l = self.len
         d = l*np.sqrt(2)
         k = self.stif
+        dissip = self.dissip
         a = np.floor(self.dim[0]/l)*l
         b = np.floor(self.dim[1]/l)*l
         x = self.position[0]
         y = self.position[1]
         g = 9.81
+        omega = self.rot
 
         #M est la matrice representant les points du solide
 
@@ -98,6 +102,10 @@ class rectangle:
         def A(L,i,j): #une fonction qui aidera á bien organiser les points de la matrice
             return L[i][j]
 
+        def Module(A):
+            return(np.sqrt(A[0]**2+A[1]**2))
+
+
         def dessine_lignes(M):
             for i in range(0,len(M)):
                 for j in range(0,len(M[0])):
@@ -138,7 +146,8 @@ class rectangle:
             return [ k * (l - AB) * (Ax - Bx) / AB,  k * (l - AB) * (Ay - By) / AB]
 
         for q in range(0,int(t*50/dt)):
-            for i in range(1,len(M)):
+            start_time=time.time()
+            for i in range(0,len(M)):
                 for j in range(0,len(M[0])):
                     if i==0:
 
@@ -216,7 +225,7 @@ class rectangle:
 
                     F[i][j]=Fr
 
-            for i in range(1,len(M)):
+            for i in range(0,len(M)):
                 for j in range(0,len(M[0])):
                     ACC[i][j][0] = (F[i][j][0] - alpha * V[i][j][0]) * dt / m
                     ACC[i][j][1] = (F[i][j][1] - alpha * V[i][j][1] - m * g) * dt / m
@@ -224,7 +233,7 @@ class rectangle:
                     M[i][j][0] = M[i][j][0] + V[i][j][0] * dt + dt ** 2 / 2 * ACC[i][j][0]
                     M[i][j][1] = M[i][j][1] + V[i][j][1] * dt + dt ** 2 / 2 * ACC[i][j][1]
 
-            for i in range(1, len(M)):
+            for i in range(0, len(M)):
                 for j in range(0, len(M[0])):
                     if i == 0:
 
@@ -302,7 +311,7 @@ class rectangle:
 
                     F[i][j] = Fr
 
-            for i in range(1, len(M)):
+            for i in range(0, len(M)):
                 for j in range(0, len(M[0])):
 
                     acc_Aij_x_1 = (F[i][j][0] - alpha * V[i][j][0]) * dt / m
@@ -314,18 +323,34 @@ class rectangle:
                     V[i][j][0] = V[i][j][0] + dt / 2 * (acc_Aij_x_1 + acc_Aij_x_0)
                     V[i][j][1] = V[i][j][1] + dt / 2 * (acc_Aij_y_1 + acc_Aij_y_0)
 
+                    if M[i][j][0]<0: #les collisions avec le sol et les murs
+
+                        M[i][j][0] = 0
+                        V[i][j][0] = -V[i][j][0]*dissip
+
+                    if M[i][j][1]<0:
+
+                        M[i][j][1] = 0
+                        V[i][j][1] = -V[i][j][1]*dissip
+
+            end_time=time.time()
+
+            frame_calculation_time=end_time-start_time
+            print(frame_calculation_time)
 
             canvas.delete("all")
             dessine_lignes(M)
             dessine_les_points_de_la_matrice(M)
 
+            if frame_calculation_time<dt:
+                time.sleep(dt-frame_calculation_time)
+
             window.update()
 
         window.mainloop()
 
-care=rectangle(1/3,1000,3,[1,1],100,[0.2,0.2],[[2,2,-0.1,-0.1]],[0,0])#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
-care.simuler(10,1/50,300)#temps_de_la_simulation,precision_dt,scale
-
+care=rectangle(1/10,10,0.7,7,[1,1],1.2,[1,0],[[1,1,0,0]],[-16,0],np.pi/4)#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
+care.simuler(10,1/100,100)#temps_de_la_simulation,precision_dt,scale
 
 
 

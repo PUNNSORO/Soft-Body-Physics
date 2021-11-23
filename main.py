@@ -83,9 +83,9 @@ class rectangle:
             print(M[i][j])
 
         W = 800
-        H = 500
+        H = 650
         window = Tk()
-        canvas = Canvas(window, width=W, height=H, bg="grey")
+        canvas = Canvas(window, width=W, height=H, bg="white")
         canvas.pack()
 
         def dessine_point(A):
@@ -102,8 +102,7 @@ class rectangle:
         def A(L,i,j): #une fonction qui aidera á bien organiser les points de la matrice
             return L[i][j]
 
-        def Module(A):
-            return(np.sqrt(A[0]**2+A[1]**2))
+
 
 
         def dessine_lignes(M):
@@ -134,6 +133,7 @@ class rectangle:
 
                             dessine_ligne_entre(A(M, i, j), A(M, i, j + 1))
 
+
         dessine_lignes(M)
         dessine_les_points_de_la_matrice(M)
 
@@ -144,11 +144,11 @@ class rectangle:
             By = B[1]
             AB=np.sqrt((Bx - Ax) ** 2 + (By - Ay) ** 2)
             return [ k * (l - AB) * (Ax - Bx) / AB,  k * (l - AB) * (Ay - By) / AB]
-
-        for q in range(0,int(t*50/dt)):
+        number_of_frames=0
+        for q in range(0,int(t/dt)):
             start_time=time.time()
             for i in range(0,len(M)):
-                for j in range(0,len(M[0])):
+                for j in range(1,len(M[0])-1):
                     if i==0:
 
                         if j==0:
@@ -226,7 +226,7 @@ class rectangle:
                     F[i][j]=Fr
 
             for i in range(0,len(M)):
-                for j in range(0,len(M[0])):
+                for j in range(1,len(M[0])-1):
                     ACC[i][j][0] = (F[i][j][0] - alpha * V[i][j][0]) * dt / m
                     ACC[i][j][1] = (F[i][j][1] - alpha * V[i][j][1] - m * g) * dt / m
 
@@ -234,7 +234,7 @@ class rectangle:
                     M[i][j][1] = M[i][j][1] + V[i][j][1] * dt + dt ** 2 / 2 * ACC[i][j][1]
 
             for i in range(0, len(M)):
-                for j in range(0, len(M[0])):
+                for j in range(1, len(M[0])-1):
                     if i == 0:
 
                         if j == 0:
@@ -312,7 +312,7 @@ class rectangle:
                     F[i][j] = Fr
 
             for i in range(0, len(M)):
-                for j in range(0, len(M[0])):
+                for j in range(1, len(M[0])-1):
 
                     acc_Aij_x_1 = (F[i][j][0] - alpha * V[i][j][0]) * dt / m
                     acc_Aij_y_1 = (F[i][j][1] - alpha * V[i][j][1] - m * g) * dt / m
@@ -336,22 +336,22 @@ class rectangle:
             end_time=time.time()
 
             frame_calculation_time=end_time-start_time
-            print(frame_calculation_time)
+
 
             canvas.delete("all")
             dessine_lignes(M)
             dessine_les_points_de_la_matrice(M)
 
-            if frame_calculation_time<dt:
-                time.sleep(dt-frame_calculation_time)
+            number_of_frames+=1
+            print(number_of_frames)
+
 
             window.update()
 
         window.mainloop()
 
-care=rectangle(1/10,10,0.7,7,[1,1],1.2,[1,0],[[1,1,0,0]],[-16,0],np.pi/4)#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
-care.simuler(10,1/100,100)#temps_de_la_simulation,precision_dt,scale
-
+care=rectangle(1/40,100000,0.5,1,[1,0.05],0.2,[0.2,0.5],[[0,0,0,0]],[0,0],np.pi/4)#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
+care.simuler(10000,1/10000,600)#temps_de_la_simulation,precision_dt,scale
 
 
 

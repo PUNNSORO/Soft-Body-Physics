@@ -49,7 +49,7 @@ class rectangle:
         g = 9.81
         omega = self.rot
 
-        limite_delasticite = 0.1
+        limite_delasticite = 1
 
         #M est la matrice representant les points du solide
 
@@ -101,8 +101,10 @@ class rectangle:
             ACC.append(I)
             F.append(T)
 
+        alpha = alpha/nombre_de_points
+
         for i in range(0, len(M)):
-            for j in range(1, len(M[0])):
+            for j in range(0, len(M[0])):
                 if i == 0:
 
                     if j == 0:
@@ -180,7 +182,7 @@ class rectangle:
 
         m = self.mass/nombre_de_points
 
-        poids = 0
+        poids = - m * g
 
         #maintenant on reorganise quelque points suivant les commande de positions_de_qlq_points
 
@@ -249,11 +251,14 @@ class rectangle:
         dessine_lignes(M)
         dessine_les_points_de_la_matrice(M)
 
+        fixer_1er_ligne_y = 1  # 0 pour non 1 pour oui
+        fixer_1er_ligne_x = 0  # 0 pour non 1 pour oui
+
         number_of_frames=0
         for q in range(0,int(t/dt)):
             start_time=time.time()
-            for i in range(0, len(M)):
-                for j in range(1, len(M[0])):
+            for i in range(fixer_1er_ligne_x, len(M)):
+                for j in range(fixer_1er_ligne_y, len(M[0])):
                     if i == 0:
 
                         if j == 0:
@@ -330,8 +335,9 @@ class rectangle:
 
                     F[i][j] = Fr
 
-            for i in range(0, len(M)):
-                for j in range(1, len(M[0])):
+
+            for i in range(fixer_1er_ligne_x, len(M)):
+                for j in range(fixer_1er_ligne_y, len(M[0])):
                     if i == 0:
 
                         if j == 0:
@@ -373,7 +379,7 @@ class rectangle:
                                 liaisons[i][j][i + 1][j] = distance_entre(M[i + 1][j], M[i][j])
                             if np.absolute(deformation([i - 1,j], [i,j])) > limite_delasticite:
                                 liaisons[i][j][i - 1][j] = distance_entre(M[i - 1][j], M[i][j])
-                            if np.absolute(deformation([i - 1][j + 1], [i][j])) > limite_delasticite:
+                            if np.absolute(deformation([i - 1,j + 1], [i,j])) > limite_delasticite:
                                 liaisons[i][j][i - 1][j + 1] = distance_entre(M[i - 1][j + 1], M[i][j])
 
                         if j != 0 and j != len(M[0]) - 1:
@@ -436,30 +442,30 @@ class rectangle:
                             if np.absolute(deformation([i - 1,j], [i,j])) > limite_delasticite:
                                 liaisons[i][j][i - 1][j] = distance_entre(M[i - 1][j], M[i][j])
 
-            for i in range(0,len(M)):
-                for j in range(1,len(M[0])):
 
-                    if i == len(M)-1 and j == len(M[0])-1 and q<100:
-                        force_horizontale = -5.5
-                        force_verticale = -5.5
+                    if i == len(M)-1 and j == len(M[0])-1 and q<0:
+                        force_horizontale = 10
+                        force_verticale = 10
 
-                    if i == len(M)-1 and j == len(M[0])-2 and q<100:
+                    if i == len(M)-1 and j == len(M[0])-2 and q<0:
                         force_horizontale = -5.5
                         force_verticale = -5.5
 
                     else:
                         force_horizontale = 0
                         force_verticale = 0
+            for i in range(fixer_1er_ligne_x, len(M)):
+                for j in range(fixer_1er_ligne_y, len(M[0])):
 
-                    ACC[i][j][0] = (F[i][j][0] - alpha * V[i][j][0] + force_horizontale) * dt / m
-                    ACC[i][j][1] = (F[i][j][1] - alpha * V[i][j][1] + poids + force_verticale) * dt / m
+                    ACC[i][j][0] = (F[i][j][0] - alpha * V[i][j][0] + force_horizontale) / m
+                    ACC[i][j][1] = (F[i][j][1] - alpha * V[i][j][1] + poids + force_verticale) / m
 
                     M[i][j][0] = M[i][j][0] + V[i][j][0] * dt + dt ** 2 / 2 * ACC[i][j][0]
                     M[i][j][1] = M[i][j][1] + V[i][j][1] * dt + dt ** 2 / 2 * ACC[i][j][1]
 
 
-            for i in range(0, len(M)):
-                for j in range(1, len(M[0])):
+            for i in range(fixer_1er_ligne_x, len(M)):
+                for j in range(fixer_1er_ligne_y, len(M[0])):
                     if i == 0:
 
                         if j == 0:
@@ -536,10 +542,7 @@ class rectangle:
 
                     F[i][j] = Fr
 
-            for i in range(0, len(M)):
-                for j in range(1, len(M[0])):
-
-                    if i == len(M)-1 and j == len(M[0])-1 and q<100 :
+                    if i == len(M)-1 and j == len(M[0])-1 and q<0 :
                         force_horizontale = -5
                         force_verticale = -5
 
@@ -547,8 +550,11 @@ class rectangle:
                         force_horizontale = 0
                         force_verticale = 0
 
-                    acc_Aij_x_1 = (F[i][j][0] - alpha * V[i][j][0] + force_horizontale) * dt / m
-                    acc_Aij_y_1 = (F[i][j][1] - alpha * V[i][j][1] + poids + force_verticale) * dt / m
+            for i in range(fixer_1er_ligne_x, len(M)):
+                for j in range(fixer_1er_ligne_y, len(M[0])):
+
+                    acc_Aij_x_1 = (F[i][j][0] - alpha * V[i][j][0] + force_horizontale) / m
+                    acc_Aij_y_1 = (F[i][j][1] - alpha * V[i][j][1] + poids + force_verticale) / m
 
                     acc_Aij_x_0 = ACC[i][j][0]
                     acc_Aij_y_0 = ACC[i][j][1]
@@ -577,18 +583,27 @@ class rectangle:
 
 
             number_of_frames+=1
-            print(number_of_frames)
+            print(number_of_frames*dt)
 
 
             window.update()
 
         window.mainloop()
 
-care=rectangle(1/10,1000,0.5,1,[1,0.2],1,[0.2,1],[[0,0,0,0]],[0,0],0)#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
-care.simuler(10000,1/100,300)#temps_de_la_simulation,precision_dt,scale
+# care=rectangle(1/10,10000,0.5,1,[1,0.2],1,[0.2,1],[[0,0,0,0]],[0,0],np.pi/6) #longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotat
+# care.simuler(10000,1/700,300)#temps_de_la_simulation,precision_dt,scale
 
-#care=rectangle(1/10,40,0.5,1,[1,1],1,[0.2,0],[[0,0,0,0]],[0,0],0)#longueur_precision_spaciale,raideur,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G
-#care.simuler(10000,1/100,300)#temps_de_la_simulation,precision_dt,scale
+# care=rectangle(1/3,50,0.5,1,[1,1],1,[0.7,1],[[0,0,0,0]],[0,0],np.pi/6)#longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotat
+# care.simuler(10000,1/200,300)#temps_de_la_simulation,precision_dt,scale
+
+# care=rectangle(1/2,500,0.5,1,[1,1],1,[0.7,0],[[1,1,0.5,0]],[0,0],0)#longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotat
+# care.simuler(10000,1/1000,300)#temps_de_la_simulation,precision_dt,scale
+
+# care=rectangle(0.02,100000,0.2,1,[1,0.05],1,[0.2,1],[[0,0,0,0]],[0,0],0)#longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotat
+# care.simuler(10000,1/10000,600)#temps_de_la_simulation,precision_dt,scale
+
+care=rectangle(1/10,1000,0.5,1,[1,0.2],1,[0.2,1],[[0,0,0,0]],[0,0],np.pi/6) #longueur_precision_spaciale,raideur,dissipation_lors_des_collision,mass,dimensions,alpha,position_initial,positions_de_qlq_points,vitesse_de_G,rotat
+care.simuler(10000,1/1000,300)#temps_de_la_simulation,precision_dt,scale
 
 
 

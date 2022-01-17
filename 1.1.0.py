@@ -1,8 +1,6 @@
 import numpy as np
 import time
 from tkinter import *
-import copy
-import keyboard
 
 #maintenant on commencera le codage de la simulation en 2D d'un objet rectangle à plusieurs particules qui sera defini
 #simplement par les données de ses points qui se trouvent á ses extrimités, on commencera l'algorithme par implementer
@@ -184,7 +182,6 @@ class rectangle:
                         liaisons[i][j][i - 1][j] = [l,k]
 
 
-        liaisons_initiales = copy.deepcopy(liaisons)
 
         def deformation (Bi, Bj, Ai, Aj):
             epsilon = (distance_entre(M[Ai][Aj], M[Bi][Bj])-liaisons[Ai][Aj][Bi][Bj][0])/liaisons[Ai][Aj][Bi][Bj][0]
@@ -845,16 +842,6 @@ class rectangle:
 
                     V[i][j][0] = V[i][j][0] + dt / 2 * (acc_Aij_x_1 + acc_Aij_x_0)
                     V[i][j][1] = V[i][j][1] + dt / 2 * (acc_Aij_y_1 + acc_Aij_y_0)
-
-                    if keyboard.is_pressed('a'):
-                        print('yes')
-                        V[i][j][0] = V[i][j][0] - 0.1
-                    if keyboard.is_pressed('d'):
-                        V[i][j][0] = V[i][j][0] + 0.1
-                    if keyboard.is_pressed('s'):
-                        V[i][j][1] = V[i][j][1] - 0.1
-                    if keyboard.is_pressed('w'):
-                        V[i][j][1] = V[i][j][1] + 0.1
 
                     if M[i][j][0]<0: #les collisions avec le sol et les murs
 

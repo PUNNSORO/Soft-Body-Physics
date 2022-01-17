@@ -863,7 +863,7 @@ class rectangle:
 
 
             number_of_frames+=1
-            print(number_of_frames*dt,"-------",q)
+            print('time of simulation :',number_of_frames*dt,"------- frame:",q)
 
 
             window.update()
